@@ -1,0 +1,9 @@
+# custom-proxy.yaml
+# Mihomo classical 规则集 —— 强制代理，压过黑名单清单
+# 用法：加一行，提交，等 1 小时或手动更新订阅
+
+payload:
+  # - DOMAIN-SUFFIX,must-proxy.example.com
+  # - DOMAIN-KEYWORD,某关键词
+  # - IP-CIDR,1.2.3.0/24
+  # - PROCESS-NAME-REGEX,^(某程序)\.exe$

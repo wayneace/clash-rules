@@ -1,0 +1,32 @@
+# custom-direct.yaml
+# Mihomo classical 规则集 —— 强制直连
+#
+# 格式：behavior: classical 时 payload 里【不能写策略】
+#   ✅ DOMAIN-SUFFIX,example.com
+#   ❌ DOMAIN-SUFFIX,example.com,DIRECT   ← 第三段会被丢弃
+#   实际出站由 RULE-SET,custom-direct,DIRECT 决定
+
+payload:
+  # ==========================================================
+  # Steam 下载 CDN —— Valve 在国内有阿里云/腾讯云节点
+  #
+  # 已从本文件剔除的 8 条（它们在 gfw.txt 里，位置 2 优先，会走代理）：
+  #   steamstatic.com、steamcommunity.com
+  #   steamcdn-a.akamaihd.net、steamcommunity-a.akamaihd.net
+  #   steamusercontent-a.akamaihd.net、steamuserimages-a.akamaihd.net
+  #   steamvideo-a.akamaihd.net、steamstore-a.akamaihd.net
+  #   （原因：gfw.txt 含 '+.akamaihd.net' 后缀规则）
+  #
+  # 商店/社区/API 走代理是 gfw.txt 管的，符合预期：
+  #   +.api.steampowered.com、+.store.steampowered.com
+  #   +.steamcommunity.com、+.steamstatic.com、+.steamladder.com
+  # ==========================================================
+
+  # ---- 核心：游戏内容下载（50G 元凶）----
+  - DOMAIN-SUFFIX,steamcontent.com
+
+  # ==========================================================
+  # 公司内网 / 自建服务
+  # ==========================================================
+  # - DOMAIN-SUFFIX,intranet.example.com
+  # - DOMAIN,nas.local
