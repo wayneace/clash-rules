@@ -1,0 +1,110 @@
+# ============================================================
+# routing.yaml — 3x-ui Clash/Mihomo 订阅的全局路由规则
+# 验证基线：3x-ui main@05a083e / mihomo v1.19.32
+# 远程模式仅这 3 个顶层 key 生效：proxy-groups / rule-providers / rules
+# ============================================================
+
+rule-providers:
+
+  # ===== GFWList：确定被墙的域名，优先级最高 =====
+  gfw:
+    type: http
+    behavior: domain
+    format: yaml
+    path: ./ruleset/gfw.yaml
+    interval: 86400
+    url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/gfw.txt"
+
+  # ===== 自定义（wayneace/clash-rules）=====
+  custom-direct:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./ruleset/custom-direct.yaml
+    interval: 3600
+    url: "https://raw.githubusercontent.com/wayneace/clash-rules/raw/main/custom-direct.yaml"
+
+  custom-proxy:
+    type: http
+    behavior: classical
+    format: yaml
+    path: ./ruleset/custom-proxy.yaml
+    interval: 3600
+    url: "https://raw.githubusercontent.com/wayneace/clash-rules/raw/main/custom-proxy.yaml"
+
+  # ===== 私有网络 =====
+  private-domain:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/private-domain.mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/private.mrs"
+
+  private-ip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    path: ./ruleset/private-ip.mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/private.mrs"
+
+  # ===== 国内 =====
+  cn-domain:
+    type: http
+    behavior: domain
+    format: mrs
+    path: ./ruleset/cn-domain.mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geosite/cn.mrs"
+
+  cn-ip:
+    type: http
+    behavior: ipcidr
+    format: mrs
+    path: ./ruleset/cn-ip.mrs
+    interval: 86400
+    url: "https://raw.githubusercontent.com/MetaCubeX/meta-rules-dat/meta/geo/geoip/cn.mrs"
+
+  # ===== 黑名单代理清单（白名单程序之外的所有程序）=====
+  proxy-list:
+    type: http
+    behavior: domain
+    format: yaml
+    path: ./ruleset/proxy-list.yaml
+    interval: 86400
+    url: "https://raw.githubusercontent.com/Loyalsoldier/clash-rules/release/proxy.txt"
+
+rules:
+
+  # ---------- 1. 私有网络：所有程序直连 ----------
+  - RULE-SET,private-domain,DIRECT
+  - RULE-SET,private-ip,DIRECT,no-resolve
+  - IP-CIDR,127.0.0.0/8,DIRECT,no-resolve
+
+  # ---------- 2. GFWList：确定需要代理 ----------
+  # 与 cn 列表交集为 0，放这里不会覆盖国内域名
+  # 注意：gfw.txt 含 '+.akamaihd.net'，整个 Akamai CDN 都会走代理
+  - RULE-SET,gfw,PROXY
+
+  # ---------- 3. 自定义集合 ----------
+  - RULE-SET,custom-direct,DIRECT
+  - RULE-SET,custom-proxy,PROXY
+
+  # ---------- 4. 国内：所有程序直连 ----------
+  - RULE-SET,cn-domain,DIRECT
+  - RULE-SET,cn-ip,DIRECT,no-resolve
+
+  # ---------- 5. 白名单程序：非国内非 GFW 流量全部代理 ----------
+  # - PROCESS-NAME-REGEX,^(chrome|opera|brave|msedge|opencode|hermes)\.exe$,PROXY
+  # - PROCESS-NAME-REGEX,^(python|pythonw|uv|uvx|pip|pipx|poetry|node|deno|bun|ollama|ollama_llama_server)\.exe$,PROXY
+  # - PROCESS-NAME-REGEX,^(git|ssh|gh|glab|winget|choco|scoop|curl|aria2c)\.exe$,PROXY
+  # - PROCESS-NAME-REGEX,^(certutil|bitsadmin|tar|7z|7za|unzip|gzip|msiexec)\.exe$,PROXY
+  # - PROCESS-NAME-REGEX,^(powershell|pwsh|bash)\.exe$,PROXY
+  # - PROCESS-NAME-REGEX,^(rg|fd|jq|yq|ffmpeg|docker|make|wsl)\.exe$,PROXY
+
+  # ---------- 6. 黑名单模式：仅清单内走代理 ----------
+  - RULE-SET,proxy-list,PROXY
+
+  # ---------- 7. 兜底直连 ----------
+  - MATCH,DIRECT
