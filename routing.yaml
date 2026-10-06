@@ -22,7 +22,7 @@ rule-providers:
     format: yaml
     path: ./ruleset/custom-direct.yaml
     interval: 3600
-    url: "https://raw.githubusercontent.com/wayneace/clash-rules/raw/main/custom-direct.yaml"
+    url: "https://raw.githubusercontent.com/wayneace/clash-rules/main/custom-direct.yaml"
 
   custom-proxy:
     type: http
@@ -30,7 +30,7 @@ rule-providers:
     format: yaml
     path: ./ruleset/custom-proxy.yaml
     interval: 3600
-    url: "https://raw.githubusercontent.com/wayneace/clash-rules/raw/main/custom-proxy.yaml"
+    url: "https://raw.githubusercontent.com/wayneace/clash-rules/main/custom-proxy.yaml"
 
   # ===== 私有网络 =====
   private-domain:
