@@ -32,7 +32,7 @@ payload:
   - DOMAIN-SUFFIX,steamcontent.com
 
   # ---- 群晖域名 ----
-  - DOMAIN-SUFFIX.dscloud.biz
-  - DOMAIN-SUFFIX.dscloud.me
-  - DOMAIN-SUFFIX.dscloud.mobi
+  - DOMAIN-SUFFIX,dscloud.biz
+  - DOMAIN-SUFFIX,dscloud.me
+  - DOMAIN-SUFFIX,dscloud.mobi
   
