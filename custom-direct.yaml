@@ -8,6 +8,12 @@
 
 payload:
   # ==========================================================
+  # 公司内网 / 自建服务
+  # ==========================================================
+  # - DOMAIN-SUFFIX,intranet.example.com
+  # - DOMAIN,nas.local
+
+  # ==========================================================
   # Steam 下载 CDN —— Valve 在国内有阿里云/腾讯云节点
   #
   # 已从本文件剔除的 8 条（它们在 gfw.txt 里，位置 2 优先，会走代理）：
@@ -25,9 +31,8 @@ payload:
   # ---- 核心：游戏内容下载（50G 元凶）----
   - DOMAIN-SUFFIX,steamcontent.com
 
-  # ==========================================================
-  # 公司内网 / 自建服务
-  # ==========================================================
-  # - DOMAIN-SUFFIX,intranet.example.com
-  # - DOMAIN,nas.local
+  # ---- 群晖域名 ----
+  - DOMAIN-SUFFIX.dscloud.biz
+  - DOMAIN-SUFFIX.dscloud.me
+  - DOMAIN-SUFFIX.dscloud.mobi
   
