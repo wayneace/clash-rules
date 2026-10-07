@@ -30,9 +30,10 @@ payload:
 
   # ---- 核心：游戏内容下载（50G 元凶）----
   - DOMAIN-SUFFIX,steamcontent.com
+  - DOMAIN-SUFFIX,rustdesk.com
 
   # ---- 群晖域名 ----
   - DOMAIN-SUFFIX,dscloud.biz
   - DOMAIN-SUFFIX,dscloud.me
   - DOMAIN-SUFFIX,dscloud.mobi
-  
+
