@@ -8,4 +8,4 @@ payload:
   # - IP-CIDR,1.2.3.0/24
   # - PROCESS-NAME-REGEX,^(某程序)\.exe$
 
-  DOMAIN-SUFFIX,deerflow.tech,PROXY
+  DOMAIN-SUFFIX,deerflow.tech
