@@ -9,4 +9,7 @@ payload:
   # - PROCESS-NAME-REGEX,^(某程序)\.exe$
 
   - DOMAIN-REGEX,^(.+\.)?deerflow\..+$
+
+  # 搜索引擎
   - DOMAIN-SUFFIX,firecrawl.dev
+  - DOMAIN-SUFFIX,jina.ai
