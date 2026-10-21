@@ -13,3 +13,4 @@ payload:
   # 搜索引擎
   - DOMAIN-SUFFIX,firecrawl.dev
   - DOMAIN-SUFFIX,jina.ai
+  - DOMAIN-SUFFIX,exa.ai
