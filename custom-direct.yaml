@@ -36,4 +36,6 @@ payload:
   - DOMAIN-SUFFIX,dscloud.biz
   - DOMAIN-SUFFIX,dscloud.me
   - DOMAIN-SUFFIX,dscloud.mobi
+  - DOMAIN-SUFFIX,quickconnect.to
+  - DOMAIN-SUFFIX,synology.com
 
