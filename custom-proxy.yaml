@@ -14,3 +14,6 @@ payload:
   - DOMAIN-SUFFIX,firecrawl.dev
   - DOMAIN-SUFFIX,jina.ai
   - DOMAIN-SUFFIX,exa.ai
+
+  # 专利、版权相关
+  - DOMAIN-SUFFIX,tmdn.org
