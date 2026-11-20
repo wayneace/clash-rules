@@ -111,70 +111,154 @@ rules:
 
 dns:
   enable: true
-  ipv6: true
-  enhanced-mode: fake-ip
-  fake-ip-range: 198.18.0.1/16
-  fake-ip-range6: fdfe:dcba:9876::1/64
-  fake-ip-filter-mode: blacklist
   prefer-h3: false
   respect-rules: false
+
+  # ipv6 建议先关：
+  # 开启后 AAAA 会返回伪 IPv6（fdfe:...），群晖/Windows 的连通性探测与 DDNS
+  # 会优先查 AAAA，一旦节点或 TUN 不支持 v6 就会卡到超时。
+  # 确认线路与 TUN 都完整支持 IPv6 后，再改回 true。
+  ipv6: false
+
+  enhanced-mode: fake-ip
+  fake-ip-range: 198.18.0.1/16
+  fake-ip-filter-mode: blacklist
+
   use-hosts: true
   use-system-hosts: true
+  cache-algorithm: arc
 
+  # ------------------------------------------------------------
+  # 这些域名不返回 fake-ip，一律给真实 IP。
+  # 判据：凡是「客户端拿到 IP 后自己直连、不做域名回退」的服务都必须列进来，
+  #       否则在非 TUN 场景下伪 IP 不可达，程序表现为超时/无法解析。
+  # 换了新的 DDNS 服务商或自建服务时，把它的域名补到对应分组即可。
+  # ------------------------------------------------------------
   fake-ip-filter:
+
+    # ---- 内网 / 私有后缀 ----
     - 'rule-set:private-domain'
     - '*.lan'
     - '*.local'
     - '*.localhost'
+    - '*.localdomain'
     - '*.arpa'
     - '*.internal'
     - '*.intranet'
     - '*.corp'
     - '*.home'
+    - '*.home.arpa'
     - '*.test'
+    - '*.invalid'
+    - '*.docker.internal'
+    - 'host.docker.internal'
+    - 'gateway.docker.internal'
+
+    # ---- Synology ----
+    # 注意区分两层：
+    #   *.synology.me / *.myds.me  = 你的记录域名
+    #   *.synology.com             = checkip / ddns / account 接口域名（关键）
+    - '+.synology.com'
+    - '+.synology.cn'
+    - '+.synology.me'
+    - '+.myds.me'
     - '+.dscloud.me'
     - '+.quickconnect.to'
     - '+.quickconnect.cn'
-    - '+.synology.me'
-    - '+.myds.me'
+
+    # ---- DDNS 服务商 ----
+    - '+.dyndns.org'
+    - '+.dyndns.com'
+    - '+.no-ip.com'
+    - '+.noip.com'
+    - '+.ddns.net'
+    - '+.dynv6.net'
+    - '+.duckdns.org'
+    - '+.afraid.org'
+    - '+.freedns.afraid.org'
+    - '+.oray.com'
+    - '+.3322.org'
+    - '+.pubyun.com'
+    - '+.dnspod.cn'
+    - '+.dnspod.com'
+    - '+.he.net'
+    - '+.ngrok.io'
+    - '+.ngrok-free.app'
+    - '+.tailscale.com'
+    - '+.ts.net'
+    - '+.zerotier.com'
+
+    # ---- 公网 IP 回显服务 ----
+    - '+.ipify.org'
+    - '+.ipinfo.io'
+    - '+.ip.sb'
+    - '+.myip.ipip.net'
+    - '+.ipip.net'
+    - '+.whatismyip.com'
+    - '+.checkip.amazonaws.com'
+    - '+.ident.me'
+    - '+.ifconfig.me'
+    - '+.ifconfig.co'
+    - '+.icanhazip.com'
     - '+.nip.io'
     - '+.sslip.io'
     - '+.xip.io'
-    - 'time.*.com'
-    - 'ntp.*.com'
-    - '*.msftncsi.com'
 
+    # ---- 时间同步 ----
+    - 'time.*.com'
+    - 'time.*.cn'
+    - 'ntp.*.com'
+    - 'ntp.*.cn'
+    - '*.pool.ntp.org'
+    - 'time-ios.apple.com'
+    - 'time.windows.com'
+    - 'time.nist.gov'
+
+    # ---- 连通性 / 强制门户检测 ----
+    - '*.msftncsi.com'
+    - '*.msftconnecttest.com'
+    - 'connectivitycheck.gstatic.com'
+    - 'connectivitycheck.android.com'
+    - 'captive.apple.com'
+    - 'detectportal.firefox.com'
+    - 'networkcheck.kde.org'
+
+  # default-nameserver 只用于解析下面 DoH 域名本身，必须是纯 IP。
+  # 不要放 IPv6 地址：ipv6 关闭时它会白白多等一轮超时。
   default-nameserver:
     - 223.5.5.5
     - 119.29.29.29
-    - 2400:3200::1
+    - 114.114.114.114
 
+  # 非策略命中的域名走这里（国内外通用）
   nameserver:
     - https://doh.pub/dns-query
     - https://dns.alidns.com/dns-query
 
   nameserver-policy:
+    # 内网域名交给网关解析
     'rule-set:private-domain':
       - 10.0.0.1
     '+.lan':
       - 10.0.0.1
+    '+.local':
+      - 10.0.0.1
 
-  fallback:
-    - https://1.1.1.1/dns-query
-    - https://8.8.8.8/dns-query
+    # 国内域名固定用国内 DoH，避免被 fallback 类逻辑带到境外解析
+    'rule-set:cn-domain':
+      - https://doh.pub/dns-query
+      - https://dns.alidns.com/dns-query
 
-  fallback-filter:
-    geoip: true
-    geoip-code: CN
-    ipcidr:
-      - 240.0.0.0/4
-      - 0.0.0.0/32
-    domain:
-      - '+.google.com'
-      - '+.facebook.com'
-      - '+.youtube.com'
+    # 你的 DDNS 服务商（非上面已列出的）在这里补，二选一：
+    # '+.your-ddns-provider.com':
+    #   - 223.5.5.5
+    #   - 119.29.29.29
 
+  # 解析代理节点服务器域名，必须直连、且不能用会走代理的 nameserver
   proxy-server-nameserver:
     - https://doh.pub/dns-query
     - 223.5.5.5
 
+  # fallback / fallback-filter 已移除：
+  # 在 fake-ip 下它不改变客户端拿到的地址，还要依赖 GeoIP 数据，
+  # 只增加解析延迟与故障面，属于历史遗留配置。
