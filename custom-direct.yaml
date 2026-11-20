@@ -32,10 +32,30 @@ payload:
   - DOMAIN-SUFFIX,steamcontent.com
   - DOMAIN-SUFFIX,rustdesk.com
 
-  # ---- 群晖域名 ----
+  # ==========================================================
+  # 群晖 / Synology
+  # synology.com 是 checkip / ddns / account / update 的接口域名，
+  # 群晖 DDNS 全靠它，误判成代理就会把节点 IP 写进 A 记录。
+  # ==========================================================
+  - DOMAIN-SUFFIX,synology.com
+  - DOMAIN-SUFFIX,synology.cn
+  - DOMAIN-SUFFIX,synology.me
+  - DOMAIN-SUFFIX,myds.me
   - DOMAIN-SUFFIX,dscloud.biz
   - DOMAIN-SUFFIX,dscloud.me
   - DOMAIN-SUFFIX,dscloud.mobi
   - DOMAIN-SUFFIX,quickconnect.to
-  - DOMAIN-SUFFIX,synology.com
+  - DOMAIN-SUFFIX,quickconnect.cn
+
+  # ==========================================================
+  # DDNS 服务商 / 公网 IP 回显
+  # 这类请求的价值就在于「服务端看到的源 IP = 你的家宽 IP」，
+  # 一旦走代理，拿到的是节点 IP，DDNS 记录会写错或校验失败。
+  # 换服务商时在这里补一行。
+  # ==========================================================
+  - DOMAIN-SUFFIX,dyndns.org
+  - DOMAIN-SUFFIX,duckdns.org
+
+  # ---- 公网 IP 查询 ----
+  - DOMAIN-SUFFIX,ipify.org
 
