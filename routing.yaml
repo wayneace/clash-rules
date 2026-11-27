@@ -154,6 +154,9 @@ dns:
     - 'host.docker.internal'
     - 'gateway.docker.internal'
 
+    # ---- 同花顺 ----
+    - +.10jqka.com.cn
+
     # ---- Synology ----
     # 注意区分两层：
     #   *.synology.me / *.myds.me  = 你的记录域名
